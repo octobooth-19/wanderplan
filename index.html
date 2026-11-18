@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wanderplan — Trip Itinerary Generator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to planner</a>
+
+  <section class="ad-banner" aria-roledescription="carousel" aria-label="Sample advertisements">
+    <span class="ad-label">Sponsored · Sample ad</span>
+    <div class="ad-viewport" id="ad-viewport" aria-live="off">
+      <!-- slides rendered by app.js -->
+    </div>
+    <div class="ad-controls">
+      <button type="button" id="ad-prev" aria-label="Previous ad">‹</button>
+      <button type="button" id="ad-pause" aria-label="Pause ad rotation" aria-pressed="false">❚❚</button>
+      <button type="button" id="ad-next" aria-label="Next ad">›</button>
+    </div>
+  </section>
+
+  <header class="site-header">
+    <div class="brand"><span aria-hidden="true">✈️</span> Wanderplan</div>
+    <p class="brand-tag">Instant itineraries for 6 hand-picked destinations</p>
+  </header>
+
+  <main id="main">
+    <section class="planner card" aria-labelledby="planner-title">
+      <h1 id="planner-title">Plan your trip</h1>
+      <form id="trip-form" novalidate>
+        <div class="field">
+          <label for="destination">Destination</label>
+          <select id="destination" name="destination" aria-describedby="destination-error">
+            <option value="">Choose a country…</option>
+          </select>
+          <p class="error" id="destination-error"></p>
+        </div>
+        <div class="field">
+          <label for="days">Duration (days)</label>
+          <input id="days" name="days" type="number" inputmode="numeric" min="1" max="14" step="1" value="5" aria-describedby="days-hint days-error" />
+          <p class="hint" id="days-hint">1–14 days</p>
+          <p class="error" id="days-error"></p>
+        </div>
+        <div class="field">
+          <label for="travelers">Travelers</label>
+          <input id="travelers" name="travelers" type="number" inputmode="numeric" min="1" max="20" step="1" value="2" aria-describedby="travelers-hint travelers-error" />
+          <p class="hint" id="travelers-hint">1–20 people</p>
+          <p class="error" id="travelers-error"></p>
+        </div>
+        <div class="field">
+          <label for="budget">Total group budget (USD)</label>
+          <input id="budget" name="budget" type="text" inputmode="decimal" value="4000" aria-describedby="budget-hint budget-error" />
+          <p class="hint" id="budget-hint">Whole group, excluding flights</p>
+          <p class="error" id="budget-error"></p>
+        </div>
+        <button type="submit" class="primary">Generate itinerary</button>
+      </form>
+    </section>
+
+    <section id="overview" class="overview card" aria-live="polite"></section>
+
+    <section id="friends" class="card friends" aria-labelledby="friends-title">
+      <h2 id="friends-title">Invite friends</h2>
+      <p class="hint">Add friends to your current itinerary. Each friend adds one traveler and costs update automatically. Demo friends only — no invitations are actually sent.</p>
+      <label for="friend-search" class="sr-only">Search friends</label>
+      <input id="friend-search" type="search" placeholder="Search friends…" autocomplete="off" />
+      <ul id="friend-list" class="friend-list"></ul>
+      <p id="friend-status" class="friend-status" role="status"></p>
+    </section>
+
+    <section id="results" aria-live="polite"></section>
+
+  </main>
+
+  <section id="checkout-page" class="page" hidden aria-labelledby="checkout-title"></section>
+  <section id="confirmation-page" class="page" hidden aria-labelledby="confirm-title"></section>
+
+  <footer class="site-footer">
+    <p>Prototype. Prices are illustrative estimates, not live rates or availability. Ads are sample content. Checkout is simulated — no money is charged and no real reservations are made.</p>
+    <p>Photos load from <a href="https://www.wikipedia.org/" target="_blank" rel="noopener">Wikipedia</a> / Wikimedia Commons (various licenses — see each image's source link). An illustration is shown when a photo can't load.</p>
+  </footer>
+
+  <script src="planner.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
