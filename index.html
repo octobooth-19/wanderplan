@@ -4,9 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Wanderplan — Trip Itinerary Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div id="travel-background" class="travel-background" aria-hidden="true" hidden>
+    <div id="background-video-host"></div>
+  </div>
   <a class="skip-link" href="#main">Skip to planner</a>
 
   <section class="ad-banner" aria-roledescription="carousel" aria-label="Sample advertisements">
@@ -24,6 +30,14 @@
   <header class="site-header">
     <div class="brand"><span aria-hidden="true">✈️</span> Wanderplan</div>
     <p class="brand-tag">Instant itineraries for 6 hand-picked destinations</p>
+    <div id="background-controls" class="background-controls" hidden>
+      <div>
+        <p id="background-title" class="background-title"></p>
+        <p id="background-status" class="background-status" role="status"></p>
+        <a id="background-credit" target="_blank" rel="noopener">View footage source</a>
+      </div>
+      <button id="background-toggle" type="button" aria-pressed="false">Pause video</button>
+    </div>
   </header>
 
   <main id="main">
@@ -70,6 +84,27 @@
       <p id="friend-status" class="friend-status" role="status"></p>
     </section>
 
+    <section id="fx" class="card fx" aria-labelledby="fx-title">
+      <h2 id="fx-title">Currency converter</h2>
+      <p class="hint">Convert US or Canadian dollars to the local currency of each destination.</p>
+      <div class="fx-inputs">
+        <div class="field">
+          <label for="fx-amount">Amount</label>
+          <input id="fx-amount" type="text" inputmode="decimal" value="100" autocomplete="off" aria-describedby="fx-error" />
+        </div>
+        <div class="field">
+          <label for="fx-base">From</label>
+          <select id="fx-base">
+            <option value="USD">🇺🇸 USD</option>
+            <option value="CAD">🇨🇦 CAD</option>
+          </select>
+        </div>
+      </div>
+      <p class="error" id="fx-error"></p>
+      <ul id="fx-results" class="fx-results" aria-live="polite"></ul>
+      <p id="fx-source" class="hint fx-source"></p>
+    </section>
+
     <section id="results" aria-live="polite"></section>
 
   </main>
@@ -80,9 +115,12 @@
   <footer class="site-footer">
     <p>Prototype. Prices are illustrative estimates, not live rates or availability. Ads are sample content. Checkout is simulated — no money is charged and no real reservations are made.</p>
     <p>Photos load from <a href="https://www.wikipedia.org/" target="_blank" rel="noopener">Wikipedia</a> / Wikimedia Commons (various licenses — see each image's source link). An illustration is shown when a photo can't load.</p>
+    <p>Destination footage: <a href="https://mixkit.co/license/#videoFree" target="_blank" rel="noopener">Mixkit Stock Video Free License</a> and <a href="https://www.pexels.com/license/" target="_blank" rel="noopener">Pexels License</a>. Videos are muted; use Pause video to stop motion. Reduced-motion preferences show a still preview instead.</p>
   </footer>
 
   <script src="planner.js"></script>
+  <script src="fx.js"></script>
+  <script src="video-background.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
