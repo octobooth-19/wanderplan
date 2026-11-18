@@ -152,6 +152,7 @@
     state.result = res;
     state.stale = false;
     state.draft = state.draft ? { ...state.draft, ack: false } : null;
+    window.TravelBackground.setDestination(input.destination);
     renderResults();
     renderFriends();
     if (focusResults) $('#results h2').focus();
@@ -166,7 +167,58 @@
     const btn = $('#to-checkout');
     if (btn) btn.disabled = true;
   });
-  destSel.addEventListener('change', renderOverview);
+  destSel.addEventListener('change', () => {
+    window.TravelBackground.setDestination(destSel.value);
+    renderOverview();
+    renderFx();
+  });
+
+  /* ---------------- Currency converter ---------------- */
+  const FX = window.FX;
+  const fxAmount = $('#fx-amount');
+  const fxBase = $('#fx-base');
+  const fxRates = new Map();
+  const fmtMoney = (value, code) => value.toLocaleString('en-US', {
+    style: 'currency', currency: code,
+    maximumFractionDigits: code === 'JPY' || code === 'IDR' ? 0 : 2
+  });
+
+  function renderFx() {
+    const base = fxBase.value;
+    const parsed = FX.parseAmount(fxAmount.value);
+    $('#fx-error').textContent = parsed.ok ? '' : parsed.error;
+    fxAmount.setAttribute('aria-invalid', String(!parsed.ok));
+    const data = fxRates.get(base);
+    const list = $('#fx-results');
+    const source = $('#fx-source');
+    if (!data) { list.innerHTML = ''; source.textContent = 'Loading exchange rates…'; return; }
+    source.textContent = data.live
+      ? `Live ECB reference rates for ${data.date}. For planning only; your bank or exchange may differ.`
+      : `Live rates unavailable — showing saved rates from ${data.date}. For planning only.`;
+    if (!parsed.ok) { list.innerHTML = ''; return; }
+    const current = FX.DEST_CURRENCY[destSel.value];
+    const rows = FX.convertAll(parsed.amount, base, data.rates)
+      .sort((a, b) => (b.code === current) - (a.code === current));
+    list.innerHTML = rows.map((r) => `
+      <li class="${r.code === current ? 'current' : ''}">
+        <span class="fx-flags" aria-hidden="true">${r.destinations.map((d) => DESTINATIONS[d].flag).join('')}</span>
+        <span class="fx-currency"><strong>${r.code}</strong> ${esc(r.name)}
+          <small>${r.code === current ? 'Your destination · ' : ''}${esc(r.destinations.map((d) => DESTINATIONS[d].name).join(', '))}</small></span>
+        <span class="fx-value"><strong>${fmtMoney(r.value, r.code)}</strong>
+          <small>1 ${base} = ${r.rate.toLocaleString('en-US', { maximumFractionDigits: 4 })} ${r.code}</small></span>
+      </li>`).join('');
+  }
+
+  async function loadFx() {
+    const base = fxBase.value;
+    renderFx();
+    if (fxRates.has(base)) return;
+    fxRates.set(base, await FX.getRates(base));
+    if (fxBase.value === base) renderFx();
+  }
+
+  fxAmount.addEventListener('input', renderFx);
+  fxBase.addEventListener('change', loadFx);
 
   /* ---------------- Destination overview ---------------- */
   function renderOverview() {
@@ -564,13 +616,16 @@
   function resetAll() {
     state.result = null; state.friends.clear(); state.transport = {}; state.stale = false; state.draft = null; state.booking = null;
     form.reset();
+    window.TravelBackground.setDestination('');
     showErrors({});
     renderOverview();
     renderResults();
     renderFriends();
+    renderFx();
     showPage('planner');
   }
 
   renderOverview();
   renderFriends();
+  loadFx();
 })();
